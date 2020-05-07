@@ -30,7 +30,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="label_memorySize">
           <property name="text">
            <string>Memory Size</string>
           </property>
@@ -55,7 +55,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="label_numberOfHoles">
           <property name="text">
            <string>Number of Holes        </string>
           </property>
@@ -71,7 +71,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <layout class="QHBoxLayout" name="horizontalLayout_holeStart">
         <item>
          <widget class="QLabel" name="label_holesStart">
           <property name="text">
@@ -89,7 +89,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <layout class="QHBoxLayout" name="horizontalLayout_holeSize">
         <item>
          <widget class="QLabel" name="label_HoleSize">
           <property name="text">
@@ -114,9 +114,9 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_processesCount">
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="label_numberOfProcess">
           <property name="text">
            <string>Number of Processes</string>
           </property>
@@ -139,7 +139,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <layout class="QHBoxLayout" name="horizontalLayout_segmentCount">
         <item>
          <widget class="QLabel" name="label_segmentCount">
           <property name="text">
@@ -157,7 +157,7 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <layout class="QHBoxLayout" name="horizontalLayout_segmentSize">
         <item>
          <widget class="QLabel" name="label_segmentSize">
           <property name="text">
@@ -175,9 +175,9 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_memoryFit">
         <item>
-         <widget class="QLabel" name="label_4">
+         <widget class="QLabel" name="label_memoryFit">
           <property name="text">
            <string>Memory fit</string>
           </property>
