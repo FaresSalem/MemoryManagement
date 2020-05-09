@@ -107,6 +107,31 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_memoryFit">
+        <item>
+         <widget class="QLabel" name="label_memoryFit">
+          <property name="text">
+           <string>Memory fit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_BestFit">
+          <property name="text">
+           <string>Best fit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_FirstFit">
+          <property name="text">
+           <string>First fit</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="Line" name="line_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -169,31 +194,6 @@
          <widget class="QSpinBox" name="spinBox_segmentSize">
           <property name="maximum">
            <number>10000</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_memoryFit">
-        <item>
-         <widget class="QLabel" name="label_memoryFit">
-          <property name="text">
-           <string>Memory fit</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_BestFit">
-          <property name="text">
-           <string>Best fit</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="radioButton_FirstFit">
-          <property name="text">
-           <string>First fit</string>
           </property>
          </widget>
         </item>
