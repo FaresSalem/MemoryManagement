@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>545</height>
+    <width>914</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <widget class="QListWidget" name="listWidget_processes"/>
-    </item>
     <item row="0" column="2">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -75,7 +65,7 @@
         <item>
          <widget class="QLabel" name="label_holesStart">
           <property name="text">
-           <string>Enter hole start adress</string>
+           <string>hole start adress</string>
           </property>
          </widget>
         </item>
@@ -93,7 +83,7 @@
         <item>
          <widget class="QLabel" name="label_HoleSize">
           <property name="text">
-           <string>Enter  hole Size</string>
+           <string>hole Size</string>
           </property>
          </widget>
         </item>
@@ -168,7 +158,7 @@
         <item>
          <widget class="QLabel" name="label_segmentCount">
           <property name="text">
-           <string>Enter  pcoess segment count</string>
+           <string>process segment count</string>
           </property>
          </widget>
         </item>
@@ -186,7 +176,7 @@
         <item>
          <widget class="QLabel" name="label_segmentSize">
           <property name="text">
-           <string>Enter  segment Size</string>
+           <string>segment Size</string>
           </property>
          </widget>
         </item>
@@ -201,6 +191,41 @@
       </item>
      </layout>
     </item>
+    <item row="0" column="5">
+     <widget class="QListWidget" name="listWidget_processes"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3" colspan="2">
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <column>
+       <property name="text">
+        <string>segment</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>start</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>end</string>
+       </property>
+      </column>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -208,7 +233,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>660</width>
+     <width>914</width>
      <height>26</height>
     </rect>
    </property>
