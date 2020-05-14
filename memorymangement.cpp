@@ -12,7 +12,7 @@ processesCount=1,processesTotalCount,
 segmentsCount,segmentTotalCount,segmentSize;
 bool bestfit=false;
 using namespace std;
-vector <int> sec_mem(0);
+
 
 
 MemoryMangement::MemoryMangement(QWidget *parent)
@@ -52,7 +52,7 @@ typedef struct segment
     int base;
     int seg_end;
 }Segment;
-vector<Segment> seg_list;
+
 typedef struct process
 {
     int process_id;
@@ -60,10 +60,14 @@ typedef struct process
 }Process;
 
 vector <hole> hole_list;                           //data structure to store information of holes in memory
-
 vector <Process> process_list;                     //data structure to store information of processes in memory
 vector <int> memory;//was only of integers
 vector<process>pending_process;
+vector<Segment> seg_list;
+vector <int> sec_mem(0);
+
+
+
 void initialize_memory(int mem_size)
 {
     for (int i = 0; i < mem_size;i++)
@@ -137,6 +141,8 @@ void MemoryMangement::reInit()
     seg_list.clear();
     pending_process.clear();
     hole_list.clear();
+    sec_mem.clear();
+    ui->tableWidget->hide();
     bestfit=false;
 }
 
@@ -148,6 +154,7 @@ void MemoryMangement::on_spinBox_memorySize_editingFinished()
         reInit();
         Size=ui->spinBox_memorySize->value();// resize memory size
         memory.resize(Size);
+        sec_mem.resize(Size);
         initialize_memory(Size);
         //QString text ="size="+QString::number(size);
         //QString text2 ="first="+QString::number(memorySize[0]);
@@ -180,9 +187,9 @@ void MemoryMangement::on_spinBox_memorySize_editingFinished()
 void MemoryMangement::on_spinBox_HolesCount_editingFinished()
 {
     holesTotalCount=ui->spinBox_HolesCount->value();
-    ui->label_holesStart->setText("Enter 1 hole start adress");
-    ui->label_HoleSize->setText("Enter 1 hole size");
-    ui->label_numberOfHoles->setText("number of holes =   "+QString::number(holesTotalCount));
+    ui->label_holesStart->setText("Enter hole 1 start adress");
+    ui->label_HoleSize->setText("Enter hole 1 size");
+//    ui->label_numberOfHoles->setText("number of holes =   "+QString::number(holesTotalCount));
     holesCount=1;
 //    ui->label_holesStart->show();
 //    ui->spinBox_holeStart->show();
@@ -200,7 +207,6 @@ void MemoryMangement::on_spinBox_holeSize_editingFinished()
 {
     if (holesCount<=holesTotalCount)
     {
-
         holeSize=ui->spinBox_holeSize->value();
         assign_hole(HoleStartAdress,holeSize); // assigning hole function
         // here we would pass it to the the functin hole.assign
@@ -213,8 +219,10 @@ void MemoryMangement::on_spinBox_holeSize_editingFinished()
         holesCount++;
         if (holesCount<=holesTotalCount)
         {
-        ui->label_holesStart->setText("Enter "+QString::number(holesCount) +" hole start adress");
-        ui->label_HoleSize->setText("Enter "+QString::number(holesCount) +" hole size");}
+        ui->label_holesStart->setText("Enter hole "+QString::number(holesCount) +" start adress");
+        ui->label_HoleSize->setText("Enter hole "+QString::number(holesCount) +" size");
+
+        }
         }
 //    if (holesCount>holesTotalCount)
 //    {
@@ -322,6 +330,7 @@ void MemoryMangement::firstFit()
             itprocess+= i;
             process_list.erase(itprocess);
             processesCount--;
+            processesTotalCount--;
         }
       processesCount++;
 
@@ -413,6 +422,7 @@ void MemoryMangement::bestFit()
             itprocess+= proccesesIndex;
             process_list.erase(itprocess);
             processesCount--;
+            processesTotalCount--;
         }
         processesCount++;
 
@@ -438,7 +448,7 @@ void MemoryMangement::on_spinBox_ProcessesCount_editingFinished()
 {
     processesTotalCount=ui->spinBox_ProcessesCount->value();
     processesTotalCount=processesTotalCount+processesCount-1;
-    ui->label_segmentCount->setText("Enter " + QString::number(processesCount)+" process segments Count");
+    ui->label_segmentCount->setText("Enter process " + QString::number(processesCount)+" segments Count");
 //    ui->label_segmentCount->show();
 //    ui->spinBox_segmentsCount->show();
 //    ui->label_segmentSize->show();
@@ -450,7 +460,7 @@ void MemoryMangement::on_spinBox_segmentsCount_editingFinished()
 {
     segmentTotalCount=ui->spinBox_segmentsCount->value();
     segmentsCount=1;
-    ui->label_segmentSize->setText("Enter process "+QString::number(processesCount)+" segment "+QString::number(segmentsCount) +" segment size");
+    ui->label_segmentSize->setText("Enter segment size");
 
 }
 
@@ -458,8 +468,8 @@ void MemoryMangement::on_spinBox_segmentSize_editingFinished()
 {
     if (segmentsCount<=segmentTotalCount)
     {
+        ui->label_segmentSize->setText("Enter segment size");
         segmentsCount++;
-        ui->label_segmentSize->setText("Enter process "+QString::number(processesCount)+" segment "+QString::number(segmentsCount) +" segment size");
         segmentSize=ui->spinBox_segmentSize->value();
         Segment s1 ={"segment "+QString::number(segmentsCount-1),segmentSize};
         seg_list.push_back(s1);
@@ -473,8 +483,8 @@ void MemoryMangement::on_spinBox_segmentSize_editingFinished()
         seg_list.erase(seg_list.begin(),seg_list.end());
         if (processesCount<=processesTotalCount)
             {
-                ui->label_segmentSize->setText("Enter process "+QString::number(processesCount)+" segment "+QString::number(segmentsCount) +" segment size");
-                ui->label_segmentCount->setText("Enter "+QString::number(processesCount) +" process segments Count");
+                ui->label_segmentSize->setText("Enter segment size");
+                ui->label_segmentCount->setText("Enter process "+QString::number(processesCount) +" segments Count");
 //                on_spinBox_segmentsCount_editingFinished();
 //                segmentTotalCount=ui->spinBox_segmentsCount->value();
             }
@@ -486,12 +496,12 @@ void MemoryMangement::on_spinBox_segmentSize_editingFinished()
 void MemoryMangement::on_listWidget_processes_itemClicked(QListWidgetItem *item)
 {
     int current_index=memory[ui->listWidget_processes->currentRow()];
-    qDebug() << process_list[current_index-1].seg_list[0].segment_name;
-    qDebug() << QString::number(process_list[current_index-1].seg_list[0].base);
-    qDebug() << QString::number(process_list[current_index-1].seg_list[0].seg_end);
+
     if (current_index!=0)
     {
-
+        qDebug() << process_list[current_index-1].seg_list[0].segment_name;
+        qDebug() << QString::number(process_list[current_index-1].seg_list[0].base);
+        qDebug() << QString::number(process_list[current_index-1].seg_list[0].seg_end);
         ui->tableWidget->setRowCount(0);
         QTableWidgetItem *SegmentName,*SegmentStart,*SegmentEnd;
         for(int i=0;i<process_list[current_index-1].seg_list.size();i++)
@@ -509,7 +519,7 @@ void MemoryMangement::on_listWidget_processes_itemClicked(QListWidgetItem *item)
         ui->tableWidget->show();
     }
     else {
-        ui->tableWidget->hide();
+        return;
     }
 
 }
@@ -610,14 +620,18 @@ void MemoryMangement::on_listWidget_processes_itemDoubleClicked(QListWidgetItem 
                 }
             }
     }
+    else
+    {
+        QMessageBox::critical(this,"can not free holes","can not free holes");
+
+    }
     if(!pending_process.empty())
     {
       for (size_t j = 0; j< pending_process.size();j++)
       {
         process_list.push_back(pending_process[j]);
-
       }
       bestfit?bestFit():firstFit();
-      pending_process.erase(pending_process.begin(),pending_process.begin());
+      pending_process.erase(pending_process.begin(),pending_process.begin()+1);
     }
 }

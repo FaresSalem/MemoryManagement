@@ -14,7 +14,9 @@ class MemoryMangement : public QMainWindow
 
 public:
     MemoryMangement(QWidget *parent = nullptr);
+
     ~MemoryMangement();
+
 
 private slots:
     void on_spinBox_memorySize_editingFinished();
