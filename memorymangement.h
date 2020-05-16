@@ -45,6 +45,7 @@ private slots:
     void firstFit();
     void reInit();
 
+
 private:
     Ui::MemoryMangement *ui;
 };

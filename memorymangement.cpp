@@ -81,8 +81,44 @@ void initialize_memory(int mem_size)
 // if there is no holes before this hole, the memory the previous total memory will be assigned as a process
 // if there is no holes after this hole, the memory the previous total memory will be assigned as a process
 // if there is hole before or after this hole, assign process only to the opposite direction.
-
-
+bool compare_holes(hole h1,hole h2)
+{
+    return (h1.base<h2.base);
+}
+void reAssignHoles()
+{
+    sort(hole_list.begin(),hole_list.end(),compare_holes);
+        for ( size_t hole_loop =0;hole_loop<hole_list.size();hole_loop++)
+        {
+            if(hole_list[hole_loop].base == hole_list[hole_loop-1].base + hole_list[hole_loop-1].limit && hole_list[hole_loop+1].base != hole_list[hole_loop].base + hole_list[hole_loop].limit)
+            {
+                hole_list[hole_loop-1].limit += hole_list[hole_loop].limit;
+                vector<Hole>::iterator it;
+                it = hole_list.begin();
+                it+= hole_loop;
+                hole_list.erase(it);
+            }
+            else if(hole_list[hole_loop].base != hole_list[hole_loop-1].base + hole_list[hole_loop-1].limit && hole_list[hole_loop+1].base == hole_list[hole_loop].base + hole_list[hole_loop].limit)
+            {
+                hole_list[hole_loop].limit += hole_list[hole_loop+1].limit;
+                vector<Hole>::iterator it;
+                it = hole_list.begin();
+                it+= hole_loop+1;
+                hole_list.erase(it);
+            }
+            else if(hole_list[hole_loop].base == hole_list[hole_loop-1].base + hole_list[hole_loop-1].limit && hole_list[hole_loop+1].base == hole_list[hole_loop].base + hole_list[hole_loop].limit)
+            {
+                hole_list[hole_loop-1].limit += hole_list[hole_loop].limit + hole_list[hole_loop+1].limit;
+                vector<Hole>::iterator it1,it2;
+                it1 = hole_list.begin();
+                it2 = hole_list.begin();
+                it1 += hole_loop;
+                it2 += hole_loop+1;
+                hole_list.erase(it1);
+                hole_list.erase(it2);
+            }
+        }
+}
 void assign_hole(int base, int limit)
 {
 
@@ -92,6 +128,7 @@ void assign_hole(int base, int limit)
     int counter=0;
     for (int j = base;j < base+limit;j++)
             memory[j] = 0;
+
     if (memory[base-1]==-1)
     {
         counter=0;
@@ -107,6 +144,7 @@ void assign_hole(int base, int limit)
         seg_list.erase(seg_list.begin(),seg_list.end());
 
     }
+
      if (memory[base+limit]==-1||memory[base+limit]>0)
     {
         if (memory[base+limit]>0)
@@ -125,8 +163,8 @@ void assign_hole(int base, int limit)
         processesCount++;
         seg_list.erase(seg_list.begin(),seg_list.end());
     }
+    reAssignHoles();
 }
-
 
 MemoryMangement::~MemoryMangement()
 {
@@ -245,21 +283,24 @@ void MemoryMangement::on_spinBox_holeSize_editingFinished()
 }
 void MemoryMangement::firstFit()
 {
+    vector<Hole>sec_holes(hole_list.size());
         sec_mem.resize(memory.size());
         int hole_index,flag=0;
         for(size_t i =0 ; i< memory.size();i++)
         {
             sec_mem[i]=memory[i];
         }
+        for (size_t i=0;i<hole_list.size();i++)
+            sec_holes[i]=hole_list[i];
         int is_fit=0;
         int i = processesCount-1;
         for (int j = 0;j<process_list[i].seg_list.size();j++)
         {
            is_fit =0;
 
-           for(size_t k = 0;k<hole_list.size();k++)
+           for(size_t k = 0;k<sec_holes.size();k++)
            {
-               if (process_list[i].seg_list[j].limit <= hole_list[k].limit)
+               if (process_list[i].seg_list[j].limit <= sec_holes[k].limit)
                   {
                     is_fit=1;
                     hole_index = k;
@@ -270,16 +311,17 @@ void MemoryMangement::firstFit()
            if(is_fit == 1)
            {
                // add to best fit
-              process_list[i].seg_list[j].base = hole_list[hole_index].base;
+              process_list[i].seg_list[j].base = sec_holes[hole_index].base;
               process_list[i].seg_list[j].seg_end =  process_list[i].seg_list[j].base +  process_list[i].seg_list[j].limit -1;
 
               flag ++;
-              for ( int s = hole_list[hole_index].base; s<hole_list[hole_index].base+process_list[i].seg_list[j].limit;s++)
+              for ( int s = sec_holes[hole_index].base; s<sec_holes[hole_index].base+process_list[i].seg_list[j].limit;s++)
               {
                   sec_mem[s] = process_list[i].process_id;
               }
-               hole_list[hole_index].limit -= process_list[i].seg_list[j].limit;
-               hole_list[hole_index].base += process_list[i].seg_list[j].limit;
+               sec_holes[hole_index].limit -= process_list[i].seg_list[j].limit;
+               sec_holes[hole_index].base += process_list[i].seg_list[j].limit;
+               qDebug() <<sec_holes[hole_index].base<< " "<< sec_holes[hole_index].limit<<" " << hole_index;
            }
            else
            {
@@ -299,6 +341,9 @@ void MemoryMangement::firstFit()
                 memory[m]=sec_mem[m];
             }
         }
+        hole_list.resize(sec_holes.size());
+        for (size_t h=0;h<sec_holes.size();h++)
+            hole_list[h]=sec_holes[h];
       }
       else // add to best fit
         {
@@ -339,10 +384,13 @@ void MemoryMangement::firstFit()
 void MemoryMangement::bestFit()
 {
     sec_mem.resize(memory.size());
+    vector<Hole>sec_holes(hole_list.size());
     for (size_t i = 0; i < memory.size();i++)
     {
         sec_mem[i]=memory[i];
     }
+    for (size_t i=0;i<hole_list.size();i++)
+        sec_holes[i]=hole_list[i];
         size_t proccesesIndex = processesCount-1;
         size_t flag = 0;
         Hole h1;
@@ -350,28 +398,28 @@ void MemoryMangement::bestFit()
         for (size_t segmentIndex = 0;segmentIndex < process_list[proccesesIndex].seg_list.size();segmentIndex++)
         {
             h1.limit = 9999999;
-            for (size_t currentHoleIndex = 0;currentHoleIndex < hole_list.size();currentHoleIndex++)
+            for (size_t currentHoleIndex = 0;currentHoleIndex < sec_holes.size();currentHoleIndex++)
             {
-                if (process_list[proccesesIndex].seg_list[segmentIndex].limit <= hole_list[currentHoleIndex].limit && h1.limit > hole_list[currentHoleIndex].limit)
+                if (process_list[proccesesIndex].seg_list[segmentIndex].limit <= sec_holes[currentHoleIndex].limit && h1.limit > sec_holes[currentHoleIndex].limit)
                 {
-                        h1 = hole_list[currentHoleIndex];
+                        h1 = sec_holes[currentHoleIndex];
                         hole_index = currentHoleIndex;
                 }
             }
             if (h1.limit != 9999999)
             {
                 // add to best fit
-               process_list[proccesesIndex].seg_list[segmentIndex].base = hole_list[hole_index].base;
+               process_list[proccesesIndex].seg_list[segmentIndex].base = sec_holes[hole_index].base;
                process_list[proccesesIndex].seg_list[segmentIndex].seg_end =  process_list[proccesesIndex].seg_list[segmentIndex].base +  process_list[proccesesIndex].seg_list[segmentIndex].limit -1;
                 flag++;
-                for (int s = hole_list[hole_index].base; s < hole_list[hole_index].base+ process_list[proccesesIndex].seg_list[segmentIndex].limit;s++)
+                for (int s = sec_holes[hole_index].base; s < sec_holes[hole_index].base+ process_list[proccesesIndex].seg_list[segmentIndex].limit;s++)
                 {
                     sec_mem[s] = process_list[proccesesIndex].process_id;
                 }
-               // qDebug() << QString::number(hole_list[hole_index].limit);
-                hole_list[hole_index].limit -= process_list[proccesesIndex].seg_list[segmentIndex].limit;
-                qDebug() << QString::number(hole_list[hole_index].limit);
-                hole_list[hole_index].base += process_list[proccesesIndex].seg_list[segmentIndex].limit;
+                //qDebug() << QString::number(sec_holes[hole_index].limit);
+                sec_holes[hole_index].limit -= process_list[proccesesIndex].seg_list[segmentIndex].limit;
+                //qDebug() << QString::number(sec_holes[hole_index].limit);
+                sec_holes[hole_index].base += process_list[proccesesIndex].seg_list[segmentIndex].limit;
             }
             else
             {
@@ -392,6 +440,9 @@ void MemoryMangement::bestFit()
                     memory[m]=sec_mem[m];
                 }
             }
+            hole_list.resize(sec_holes.size());
+            for (size_t h=0;h<sec_holes.size();h++)
+                hole_list[h]=sec_holes[h];
         }
         else
         {
@@ -404,7 +455,7 @@ void MemoryMangement::bestFit()
             QMessageBox::StandardButton replay= QMessageBox::question(this,"Process does not fit","Process does not fit delete?",QMessageBox::Yes|QMessageBox::Save);
             if (replay==QMessageBox::Save)
             {
-                qDebug() <<" save";
+                //qDebug() <<" save";
                  //move process to pending if not fit
                 pending_process.push_back(process_list[proccesesIndex]);
             }
@@ -499,10 +550,10 @@ void MemoryMangement::on_listWidget_processes_itemClicked(QListWidgetItem *item)
 
     if (current_index!=0)
     {
-        qDebug() << process_list[current_index-1].seg_list[0].segment_name;
-        qDebug() << QString::number(process_list[current_index-1].seg_list[0].base);
-        qDebug() << QString::number(process_list[current_index-1].seg_list[0].seg_end);
-        ui->tableWidget->setRowCount(0);
+//        qDebug() << process_list[current_index-1].seg_list[0].segment_name;
+//        qDebug() << QString::number(process_list[current_index-1].seg_list[0].base);
+//        qDebug() << QString::number(process_list[current_index-1].seg_list[0].seg_end);
+//        ui->tableWidget->setRowCount(0);
         QTableWidgetItem *SegmentName,*SegmentStart,*SegmentEnd;
         for(int i=0;i<process_list[current_index-1].seg_list.size();i++)
         {
@@ -510,7 +561,7 @@ void MemoryMangement::on_listWidget_processes_itemClicked(QListWidgetItem *item)
               SegmentStart= new QTableWidgetItem(QString::number(process_list[current_index-1].seg_list[i].base));
               SegmentEnd= new QTableWidgetItem(QString::number(process_list[current_index-1].seg_list[i].seg_end));
             ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-            qDebug() << QString::number(ui->tableWidget->rowCount());
+            //qDebug() << QString::number(ui->tableWidget->rowCount());
                 ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 0, SegmentName);
                 ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 1, SegmentStart);
                 ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 2, SegmentEnd);
@@ -523,10 +574,7 @@ void MemoryMangement::on_listWidget_processes_itemClicked(QListWidgetItem *item)
     }
 
 }
-bool compare_holes(hole h1,hole h2)
-{
-    return (h1.base<h2.base);
-}
+
 void MemoryMangement::on_listWidget_processes_itemDoubleClicked(QListWidgetItem *item)
 {
     ui->tableWidget->hide();
