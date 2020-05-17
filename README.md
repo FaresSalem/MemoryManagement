@@ -1,6 +1,6 @@
 # Memory Managment Simulator
 please check
-(https://www.youtube.com/watch?v=fm2zFXYMDYk)
+(https://www.youtube.com/watch?v=p9qwLKt7qng)
 
 # Our goal 
 Main goal is to build a simulator to simulate how OS doing memory management 
