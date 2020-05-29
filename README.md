@@ -10,5 +10,8 @@ this app simualte 2 approches
 ### muhammad kamal
 ### omar samir
 ### ahmed ehab
+### amir abo zaid
+### fares salem
 ## GUI by 
 ### muhammad kamal
+### fares salem
