@@ -1,6 +1,7 @@
 #ifndef MEMORYMANGEMENT_H
 #define MEMORYMANGEMENT_H
 
+#include <QListWidget>
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -13,7 +14,9 @@ class MemoryMangement : public QMainWindow
 
 public:
     MemoryMangement(QWidget *parent = nullptr);
+
     ~MemoryMangement();
+
 
 private slots:
     void on_spinBox_memorySize_editingFinished();
@@ -28,16 +31,20 @@ private slots:
 
     void on_radioButton_FirstFit_clicked();
 
-
-    void on_listWidget_processes_doubleClicked(const QModelIndex &index);
-
-    void on_listWidget_processes_clicked(const QModelIndex &index);
-
     void on_spinBox_ProcessesCount_editingFinished();
 
     void on_spinBox_segmentsCount_editingFinished();
 
     void on_spinBox_segmentSize_editingFinished();
+
+    void on_listWidget_processes_itemClicked(QListWidgetItem *item);
+
+    void on_listWidget_processes_itemDoubleClicked(QListWidgetItem *item);
+
+    void bestFit();
+    void firstFit();
+    void reInit();
+
 
 private:
     Ui::MemoryMangement *ui;
